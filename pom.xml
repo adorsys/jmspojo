@@ -21,7 +21,7 @@
 
 	<groupId>de.adorsys.jmspojo</groupId>
 	<artifactId>jmspojo</artifactId>
-	<version>0.1</version>
+	<version>0.2-SNAPSHOT</version>
 	<name>JMS POJO</name>
 	<description>A JMS Java POJO Bidi Adapter</description>
 	<url>https://github.com/adorsys/jmspojo</url>
@@ -38,7 +38,7 @@
 		<connection>scm:git@github.com:adorsys/jmspojo.git</connection>
 		<developerConnection>scm:git:git@github.com:adorsys/jmspojo.git</developerConnection>
 		<url>git@github.com:git@github.com:adorsys/jmspojo.git</url>
-		<tag>jmspojo-0.1</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<licenses>
 		<license>
