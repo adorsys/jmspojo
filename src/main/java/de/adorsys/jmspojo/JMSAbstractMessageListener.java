@@ -15,6 +15,7 @@
  */
 package de.adorsys.jmspojo;
 
+import javax.annotation.PostConstruct;
 import javax.jms.ConnectionFactory;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -27,7 +28,11 @@ public abstract class JMSAbstractMessageListener<T> implements MessageListener {
 	private JMSMessageListenerServiceAdapter<T> adapter;
 
 	public JMSAbstractMessageListener() {
-		adapter = JMSMessageListenerServiceAdapter.createAdapter(getService(), getConnectionFactory(), getObjectMapper());
+	}
+	
+	@PostConstruct
+	protected void init() {
+		adapter = JMSMessageListenerServiceAdapter.createAdapter(getService(), getConnectionFactory(), getObjectMapper());		
 	}
 
 	protected abstract T getService();
@@ -40,6 +45,7 @@ public abstract class JMSAbstractMessageListener<T> implements MessageListener {
 
 	@Override
 	public void onMessage(Message message) {
+		assert adapter != null : "init must be called before onMessage";
 		adapter.onMessage(message);
 	}
 

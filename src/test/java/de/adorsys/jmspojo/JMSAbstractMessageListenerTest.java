@@ -25,6 +25,23 @@ import de.adorsys.jmspojo.JMSMessageListenerServiceAdapterTest.SampleMessageServ
 
 public class JMSAbstractMessageListenerTest {
 	
+	public static class SampleMDB
+			extends JMSAbstractMessageListener<SampleMessageServiceVoid> {
+		
+		SampleMessageServiceVoid service;
+		ConnectionFactory cf;
+
+		@Override
+		protected SampleMessageServiceVoid getService() {
+			return service;
+		}
+
+		@Override
+		protected ConnectionFactory getConnectionFactory() {
+			return cf;
+		}
+	}
+
 	private ActiveMQConnectionFactory cf;
 	private BrokerService broker;
 	private QueueConnection qc;
@@ -65,18 +82,10 @@ public class JMSAbstractMessageListenerTest {
 		
 		
 		final SampleMessageServiceVoid service = new SampleMessageServiceVoid();
-		JMSAbstractMessageListener<SampleMessageServiceVoid> jmsAbstractMessageListener = new JMSAbstractMessageListener<SampleMessageServiceVoid>() {
-			
-			@Override
-			protected SampleMessageServiceVoid getService() {
-				return service;
-			}
-			
-			@Override
-			protected ConnectionFactory getConnectionFactory() {
-				return cf;
-			}
-		};
+		SampleMDB jmsAbstractMessageListener = new SampleMDB();
+		jmsAbstractMessageListener.service = service;
+		jmsAbstractMessageListener.cf = cf;
+		jmsAbstractMessageListener.init();
 		
 		jmsAbstractMessageListener.onMessage(textMessage);
 		

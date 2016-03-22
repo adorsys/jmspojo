@@ -3,9 +3,9 @@
 ## Maven Dependency
 
     <dependency>
-	    <groupId>de.adorsys.jms-service-stub</groupId>
-	    <artifactId>jms-service-stub</artifactId>
-	    <version>0.1-SNAPSHOT</version>
+		<groupId>de.adorsys.jmspojo</groupId>
+		<artifactId>jmspojo</artifactId>
+	    <version>0.1</version>
     </dependency>
     
 ## Defining a JMS-Service Interface
@@ -26,7 +26,7 @@
 
     }
 
-## Initalizing the Service Interface
+## Initializing the Service Interface
 
     JMSServiceAdapterFactory jmsServiceStubFactory = new JMSServiceAdapterFactory(OBJECT_MAPPER, cf, defaultQueue, JMS_TIMEOUT);
 	JMSSampleService service = jmsServiceStubFactory.generateJMSServiceProxy(JMSSampleService.class);
@@ -68,14 +68,40 @@
         PingMessage sampleMessage = future2.get();
     }
     
-# Recive messages with MessageDrivenBean or MessageListener adapter
+# Receive messages with MessageDrivenBean or MessageListener adapter
 
-## Define the POJO reciver class
+## Define the POJO receiver class
 
     public static class SampleMessageServiceWithReply {
 		@JMSMessageReceiver
 		public PingMessage ping(PingMessage message) {
 			return message;
+		}
+	}
+	
+## Implementing a Message Driven Bean
+
+	@MessageDriven(activationConfig= {
+    	@ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
+    	@ActivationConfigProperty(propertyName="destination", propertyValue="sampleQ")
+	})
+	public class SampleMDB
+			extends JMSAbstractMessageListener<SampleMessageServiceWithReply> {
+		
+		@Inject
+		SampleMessageServiceWithReply service;
+		
+		@Resource(lookup="java:/JmsXA")
+		ConnectionFactory cf;
+
+		@Override
+		protected SampleMessageServiceWithReply getService() {
+			return service;
+		}
+
+		@Override
+		protected ConnectionFactory getConnectionFactory() {
+			return cf;
 		}
 	}
 
@@ -85,7 +111,7 @@
     JMSMessageListenerServiceAdapter<SampleMessageServiceWithReply> adapter =
         JMSMessageListenerServiceAdapter.createAdapter(service, cf, OBJECT_MAPPER);
         
-## Delegate onMessage to the POJO adaper 
+## Delegate onMessage to the POJO adapter 
     
     new MessageListener() {
 			
